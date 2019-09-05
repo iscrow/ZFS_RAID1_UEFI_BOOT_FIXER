@@ -37,7 +37,6 @@ COUNTER=0
 for PARTITION in $(cat /proc/partitions | grep -P '.*\d' | awk '{print "/dev/"$4}'); do
   DEVICE=$(echo $PARTITION | sed -E 's|(.*)p[0-9]+|\1|g')
   echo "Checking device $DEVICE partition $PARTITION"
-  fdisk -l "$DEVICE"
   [ "$(fdisk -l "$DEVICE" 2>/dev/null | grep "$PARTITION " | grep '512M EFI System' | wc -l)" -eq 1 ] || continue
   echo "Device $DEVICE and partition $PARTITION are valid candidates"
   ((BOOTDEV_COUNT++))
