@@ -34,9 +34,10 @@ BOOTPARTS=""
 MOUNTPART=""
 COUNTER=0
 
-for PARTITION in $(ls /dev/sd?2); do
-  DEVICE=${PARTITION:0:8}
+for PARTITION in $(cat /proc/partitions | grep -P '.*\d' | awk '{print "/dev/"$4}'); do
+  DEVICE=$(echo $PARTITION | sed -E 's|(.*)p[0-9]+|\1|g')
   echo "Checking device $DEVICE partition $PARTITION"
+  fdisk -l "$DEVICE"
   [ "$(fdisk -l "$DEVICE" 2>/dev/null | grep "$PARTITION " | grep '512M EFI System' | wc -l)" -eq 1 ] || continue
   echo "Device $DEVICE and partition $PARTITION are valid candidates"
   ((BOOTDEV_COUNT++))
@@ -49,7 +50,7 @@ echo "Detected both EFI partitions $BOOTPARTS"
 echo
 
 for PARTITION in $BOOTPARTS; do
-  DEVICE=${PARTITION:0:8}
+  DEVICE=$(echo $PARTITION | sed -E 's|(.*)p[0-9]+|\1|g')
   [ -b "$PARTITION" ] || error "Partition $PARTITION not a block device"
   [ -b "$DEVICE" ] || error "Device $DEVICE not a block device"
   echo "Configuring partition $PARTITION on device $DEVICE"
