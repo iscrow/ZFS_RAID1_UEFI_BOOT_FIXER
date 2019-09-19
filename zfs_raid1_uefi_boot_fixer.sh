@@ -26,6 +26,10 @@ function setupUEFIBoot {
   [ -z "$MOUNTPART" ] && MOUNTPART="$PARTITION"
 }
 
+function partitionToDevice {
+  echo "$1" | sed -E 's/(.*)([0-9]+$|([0-9]+n[0-9]+)p[0-9]+)/\1\3/g'
+}
+
 [ -d /boot/efi ] || error "/boot/efi directory does not exist"
 [ "$(zpool list | grep rpool | wc -l)" -eq 1 ] || error "ZFS pool rpool not found"
 
@@ -35,7 +39,7 @@ MOUNTPART=""
 COUNTER=0
 
 for PARTITION in $(cat /proc/partitions | grep -P '.*\d' | awk '{print "/dev/"$4}'); do
-  DEVICE=$(echo $PARTITION | sed -E 's|(.*)p[0-9]+|\1|g')
+  DEVICE=$(partitionToDevice $PARTITION)
   echo "Checking device $DEVICE partition $PARTITION"
   [ "$(fdisk -l "$DEVICE" 2>/dev/null | grep "$PARTITION " | grep '512M EFI System' | wc -l)" -eq 1 ] || continue
   echo "Device $DEVICE and partition $PARTITION are valid candidates"
@@ -49,7 +53,7 @@ echo "Detected both EFI partitions $BOOTPARTS"
 echo
 
 for PARTITION in $BOOTPARTS; do
-  DEVICE=$(echo $PARTITION | sed -E 's|(.*)p[0-9]+|\1|g')
+  DEVICE=$(partitionToDevice $PARTITION)
   [ -b "$PARTITION" ] || error "Partition $PARTITION not a block device"
   [ -b "$DEVICE" ] || error "Device $DEVICE not a block device"
   echo "Configuring partition $PARTITION on device $DEVICE"
