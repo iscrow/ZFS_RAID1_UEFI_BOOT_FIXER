@@ -21,3 +21,6 @@ Then initialize the partition. This makes it bootable and adds it to the proxmox
 
 Any initialized partitioins' UUIDs are added to a list /etc/kernel/pve-efiboot-uuids. That's how proxmox knows what partitions to update when new kernels are installed via update. These UUIDs correspond to the EFI partition IDS in /dev/disk/by-uuid/. the list may contain old no longer existing UUIDs and will complain about them. this won't break anything but to remove the warnings just remove the UUIDs of any missing partitions that you don't expect to be reconnected later from /etc/kernel/pve-efiboot-uuids. The error will look like: 
 	WARN: /dev/disk/by-uuid/4590-E286 does not exist - clean '/etc/kernel/pve-efiboot-uuids'! - skipping
+
+Lastly, you can use pve-efiboot-tool refresh to update all partitions but this happen automatically on kernel update.
+
