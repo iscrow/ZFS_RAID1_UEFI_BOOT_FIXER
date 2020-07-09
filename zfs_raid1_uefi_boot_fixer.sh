@@ -19,7 +19,7 @@ function warn {
 
 	First format the EFI partition. Use --force if the this is not a new disk and the partition was previously formatted:
 
-        pve-efiboot-tool format /dev/sdz2
+	pve-efiboot-tool format /dev/sdz2
 
 	or, if necessary
 
