@@ -1,7 +1,7 @@
+**This is no longer necessary. Proxmox now has pve-efiboot-tool**
+
 # ZFS_RAID1_UEFI_BOOT_FIXER
 If you have a ZFS RAID1 setup over multiple devices and you'd like to be able to UEFI boot from any one of them, this script may help
-
-This is no longer necessary. Proxmox now has pve-efiboot-tool
 
 To use:
 Find your EFI partitions. They're usually /dev/sda2 and /dev/sdb2, I will use /dev/sdz2 as an example:
